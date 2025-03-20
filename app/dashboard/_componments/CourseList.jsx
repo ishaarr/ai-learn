@@ -3,7 +3,7 @@ import { useUser } from '@clerk/nextjs'
 import axios from 'axios'
 import { index } from 'drizzle-orm/gel-core';
 import React, { useEffect, useState } from 'react'
-// import {CourseCardItem} from './CourseCardItem'
+import CourseCardItem from './CourseCardItem';
 
 function CourseList() {
 
@@ -12,18 +12,27 @@ function CourseList() {
     useEffect(()=>{
         user&&GetCourseList();
     },[user])
+
     const GetCourseList=async()=>{
-        const result=await axios.post('/api/courses',
-        {createdBy:user?.primaryEmailAddress?.emailAddress})
-        console.log(result);
-        setCourseList(result.data.result);
+        try{
+            const result=await axios.post('/api/courses',
+                {createdBy:user?.primaryEmailAddress?.emailAddress})
+        
+                if(result && result.data){
+                    setCourseList(result.data.result);
+                }
+        }catch(error){
+            console.log(error);
+        }
+     
+
     }
 
   return (
     <div className='mt-10'>
         <h2 className='flex-bold text-2xl'>Your Study Material</h2>
         <div className='grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 mt-2 gap-5'>
-            {CourseList?.map((course,index)=>(
+            {CourseList && CourseList?.map((course,index)=>(
                 <CourseCardItem course={course} key={index}/>
             ))}
         </div>

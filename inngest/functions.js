@@ -22,7 +22,7 @@ export const CreateNewUser=inngest.createFunction(
             //Check is user already exist
             const result= await db.select().from(USER_TABLE)
             .where(eq(USER_TABLE.email,user?.primaryEmailAddress?.emailAddress))
-            console.log(result);
+           
             if (result?.length==0) {
             //if not, then add to database
             const userResp= await db.insert(USER_TABLE).values({
@@ -30,7 +30,7 @@ export const CreateNewUser=inngest.createFunction(
                 email:user?.primaryEmailAddress?.emailAddress
                 }).returning({id:USER_TABLE.id})
                 return userResp;
-                //console.log(userResp);
+               
             }
             return result;
         })

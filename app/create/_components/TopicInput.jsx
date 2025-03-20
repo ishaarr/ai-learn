@@ -23,9 +23,9 @@ function TopicInput({setTopic,setDefficultyLevel}) {
                 <SelectValue placeholder="Difficulty Level" />
             </SelectTrigger>
             <SelectContent>
-                <SelectItem value="light">Easy</SelectItem>
-                <SelectItem value="dark">Moderate</SelectItem>
-                <SelectItem value="system">Hard</SelectItem>
+                <SelectItem value="Easy">Easy</SelectItem>
+                <SelectItem value="Moderate">Moderate</SelectItem>
+                <SelectItem value="Hard">Hard</SelectItem>
             </SelectContent>
 </Select>
 
