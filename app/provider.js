@@ -15,26 +15,27 @@ function Provider({ children }) {
   }, [user]);
 
   const CheckIsNewUser = async () => {
-    try {
-      //Check is user already exist
-      const result = await db
-        .select()
-        .from(USER_TABLE)
-        .where(eq(USER_TABLE.email, user?.primaryEmailAddress?.emailAddress));
-      if (result?.length == 0) {
-        //if not, then add to database
-        const userResp = await db
-          .insert(USER_TABLE)
-          .values({
-            name: user?.fullName,
-            email: user?.primaryEmailAddress?.emailAddress,
-          })
-          .returning({ id: USER_TABLE.id });
-      }
+    // try {
+    //   //Check is user already exist
+    //   const result = await db
+    //     .select()
+    //     .from(USER_TABLE)
+    //     .where(eq(USER_TABLE.email, user?.primaryEmailAddress?.emailAddress));
+    //   if (result?.length == 0) {
+    //     //if not, then add to database
+    //     const userResp = await db
+    //       .insert(USER_TABLE)
+    //       .values({
+    //         name: user?.fullName,
+    //         email: user?.primaryEmailAddress?.emailAddress,
+    //       })
+    //       .returning({ id: USER_TABLE.id });
+    //   }
       
-    } catch (error) {
-      console.log(error);
-    }
+    // } catch (error) {
+      const resp=await axios.post('/api/create-user',{user:user});
+      console.log(resp.data);
+    
   };
 
   return <div>{children}</div>;

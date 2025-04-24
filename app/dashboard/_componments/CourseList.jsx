@@ -4,22 +4,27 @@ import axios from 'axios'
 import { index } from 'drizzle-orm/gel-core';
 import React, { useEffect, useState } from 'react'
 import CourseCardItem from './CourseCardItem';
+import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
 
 function CourseList() {
 
     const {user}=useUser();
     const [CourseList,setCourseList]=useState([]);
+    const [loading,setLoading]=useState(false);
     useEffect(()=>{
         user&&GetCourseList();
     },[user])
 
     const GetCourseList=async()=>{
         try{
+            setLoading(true);
             const result=await axios.post('/api/courses',
                 {createdBy:user?.primaryEmailAddress?.emailAddress})
         
                 if(result && result.data){
                     setCourseList(result.data.result);
+                    setLoading(false);
                 }
         }catch(error){
             console.log(error);
@@ -30,11 +35,22 @@ function CourseList() {
 
   return (
     <div className='mt-10'>
-        <h2 className='flex-bold text-2xl'>Your Study Material</h2>
+        <h2 className='flex-bold text-2xl flex justify-between items-center'>Your Study Material
+            <Button variant="outline"
+            onClick={GetCourseList}
+            className="border-primary
+            text-primary"><RefreshCw/>Refresh
+            </Button>
+        </h2>
         <div className='grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 mt-2 gap-5'>
-            {CourseList && CourseList?.map((course,index)=>(
+            {loading==false? CourseList && CourseList?.map((course,index)=>(
                 <CourseCardItem course={course} key={index}/>
-            ))}
+            ))
+        :[1,2,3,4,5,6].map((item,index)=>{
+            <div key={index} className='h-56 w-full bg-slate-200 rounded-lg animate-pulse'>
+            </div>
+        })
+        }
         </div>
       
     </div>

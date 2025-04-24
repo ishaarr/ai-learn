@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useUser } from "@clerk/nextjs";
 import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 function Create() {
   const [step, setStep] = useState(0);
@@ -37,6 +38,9 @@ function Create() {
       setLoading(false);
       if(result.data){
 router.replace('/dashboard');
+//Toast Notification
+toast("Your course content is generating, Click on Refresh Button.")
+
       }
       
     } catch (error) {
@@ -50,7 +54,7 @@ router.replace('/dashboard');
         Start Building Your Personal Study Material
       </h2>
       <p className="text-gray-500 text-lg">
-        Fill All details in order to fenerate study material for your next
+        Fill all details in order to generate study material for your next
         project
       </p>
 
