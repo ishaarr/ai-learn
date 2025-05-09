@@ -11,8 +11,8 @@ export const USER_TABLE=pgTable('users',{
 
 export const STUDY_MATERIAL_TABLE=pgTable('studyMaterial',{
     id:serial().primaryKey(),
-    courseId:varchar().notNull(),
-    courseType:varchar().notNull(),
+    courseId:varchar(),
+    courseType:varchar(),
     topic:varchar().notNull(),
     difficultyLevel:varchar().default('Easy'),
     courseLayout:json(),

@@ -9,7 +9,7 @@ function MaterialCardItem({item,studyTypeContent,course}) {
   const GenerateContent=async()=>{
 
     setLoading(true)
-    // console.log(course)
+
     let chapters='';
     course?.courseLayout.chapters.forEach((chapter) => {
       chapters=(chapter.title||chapters?.Title)+','+chapters
@@ -22,7 +22,7 @@ function MaterialCardItem({item,studyTypeContent,course}) {
     });
 
     setLoading(false);
-    console.log(result);
+
   }
   return (
     <div className={`border shadow-md rounded-lg p-5 flex flex-col items-center

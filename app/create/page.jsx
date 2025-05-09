@@ -35,14 +35,13 @@ function Create() {
         ...formData,
         createdBy: user?.primaryEmailAddress?.emailAddress,
       });
+    
       setLoading(false);
-      if(result.data){
-router.replace('/dashboard');
-//Toast Notification
-toast("Your course content is generating, Click on Refresh Button.")
-
+      if (result.data) {
+        router.replace("/dashboard");
+        //Toast Notification
+        toast("Your course content is generating, Click on Refresh Button.");
       }
-      
     } catch (error) {
       console.log(error, "error");
     }

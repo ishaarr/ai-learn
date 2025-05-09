@@ -22,7 +22,7 @@ function ViewNotes() {
         studyType:'notes'
       });
 
-      console.log(result?.data);
+   
       setNotes(result?.data);
     }
 
