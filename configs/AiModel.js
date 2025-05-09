@@ -15,6 +15,14 @@ const generationConfig = {
   responseMimeType: "application/json",
 };
 
+const generationConfig2 = {
+  temperature: 1,
+  topP: 0.95,
+  topK: 40,
+  maxOutputTokens: 8192,
+  responseMimeType: "text/plain",
+};
+
 export default async function generateStudyMaterial(topic, courseType, difficultyLevel) {
   try {
     const prompt = `
@@ -83,4 +91,34 @@ export const generateNotesAiModel = model.startChat({
   ],
 });
 
+export const GenerateStudyTypeContentAiModel = new GoogleGenAI
+  ({
+  apiKey: process.env.GEMINI_API_KEY,
+});
+s
+const config = {
+  responseMimeType: 'text/plain',
+};
+
+
+const contents = [
+  {
+    role: 'user',
+    parts: [
+      {
+        text: 'INSERT_INPUT_HERE',
+      },
+    ],
+  },
+];
+
+const response = await ai.models.generateContentStream({
+  model,
+  config,
+  contents,
+});
+
+for await (const chunk of response) {
+  console.log(chunk.text);
+}
 

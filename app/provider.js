@@ -33,7 +33,7 @@ function Provider({ children }) {
     //   }
       
     // } catch (error) {
-      const resp=await axios.post('/api/create-user',{user:user});
+      const resp = await axios.post('/api/create-user',{user:user});
       console.log(resp.data);
     
   };

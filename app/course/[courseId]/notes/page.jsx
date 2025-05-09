@@ -1,20 +1,22 @@
 "use client"
 import { Button } from '@/components/ui/button';
-import axios from 'axios'
-import { useParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import axios from 'axios';
+import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 function ViewNotes() {
 
     const {courseId}=useParams();
     const [notes,setNotes]=useState();
     const [stepCount,setStepCount]=useState(0)
+    const route=useRouter();
     useEffect(()=>{
       GetNotes();
     },[])
 
 
-    const GetNotes= async()=>{
+    const GetNotes = async()=>{
       const result = await axios.post('/api/study-type',{
         courseId:courseId,
         studyType:'notes'
@@ -35,8 +37,14 @@ function ViewNotes() {
         <Button variant="outline" size="sm" onClick={()=>setStepCount(stepCount+1)}>Next</Button>
       </div>
 
-      <div>
+      <div className='mt-10'>
         <div dangerouslySetInnerHTML={{__html:notes[stepCount]?.notes}}/>
+
+        {notes?.length==stepCount&&<div className='flex items-center gap-10 flex-col justify-center'>
+
+          <h2>End of Notes</h2>
+          <Button onClick={()=>route.back()}>Go Back</Button>
+        </div>}
       </div>
     </div>
   )

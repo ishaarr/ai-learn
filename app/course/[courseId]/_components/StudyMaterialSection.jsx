@@ -3,7 +3,7 @@ import MaterialCardItem from './MaterialCardItem'
 import axios from 'axios';
 import Link from 'next/link';
 
-function StudyMaterialSection({courseId}) {
+function StudyMaterialSection({courseId,course}) {
 
     const[studyTypeContent,setStudyTypeContent]=useState();
 
@@ -62,6 +62,7 @@ function StudyMaterialSection({courseId}) {
                 <Link key = {index} href = {'/course/'+courseId+item.path}>
                     <MaterialCardItem item={item} key={index}
                         studyTypeContent = {studyTypeContent}
+                        course={course}
                     />
                 </Link>
             ))}

@@ -1,7 +1,29 @@
 import { Button } from '@/components/ui/button'
-import React from 'react'
+import axios from 'axios'
+import { RefreshCcw } from 'lucide-react';
+import React, { useState } from 'react'
 
-function MaterialCardItem({item,studyTypeContent}) {
+function MaterialCardItem({item,studyTypeContent,course}) {
+
+  const [loading,setLoading]=useState(false);
+  const GenerateContent=async()=>{
+
+    setLoading(true)
+    // console.log(course)
+    let chapters='';
+    course?.courseLayout.chapters.forEach((chapter) => {
+      chapters=(chapter.title||chapters?.Title)+','+chapters
+    });
+  
+      const result = await axios.post('/api/study-type-content',{
+      courseId:course?.course,
+      type:item.name,
+      chapters:chapters
+    });
+
+    setLoading(false);
+    console.log(result);
+  }
   return (
     <div className={`border shadow-md rounded-lg p-5 flex flex-col items-center
       ${studyTypeContent?.[item.type]?.length==null&&'grayscale'}
@@ -14,7 +36,7 @@ function MaterialCardItem({item,studyTypeContent}) {
       <p className='text-gray-500 text-sm text-center'>{item.desc}</p>
 
       {studyTypeContent?.[item.type]?.length==null?
-      <Button className="mt-3 w-full cursor-pointer" variant="outline">Generate</Button>
+      <Button className="mt-3 w-full cursor-pointer" variant="outline" onClick={()=>GenerateContent}>{loading&& <RefreshCcw className='animate-spin'/> }Generate</Button>
       :<Button className="mt-3 w-full cursor-pointer" variant="outline">View</Button>}
     </div>
   )
