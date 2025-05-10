@@ -1,5 +1,5 @@
 import React from 'react'
-import Flashcard from '@/components/Flashcard'
+import Flashcard from '../_components/Flashcard'
 
 export default function FlashcardsPage() {
   // In a real app, you would fetch flashcards for this course

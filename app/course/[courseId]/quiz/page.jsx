@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Loader2, ChevronLeft, ChevronRight, Trophy, BookOpen } from 'lucide-react';
-import QuizQuestion from '@/components/QuizQuestion';
+
 export default function QuizPage() {
   const { courseId } = useParams();
   const router = useRouter();
@@ -13,21 +13,25 @@ export default function QuizPage() {
   const [error, setError] = useState(null);
   const [score, setScore] = useState(null);
   const [answers, setAnswers] = useState([]);
+  const [showResult, setShowResult] = useState(false);
 
   useEffect(() => {
     const fetchQuizQuestions = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/courses/${courseId}/quiz`);
-        if (!res.ok) throw new Error("Failed to fetch quiz");
+        const res = await fetch(`/api/courses?courseId=${courseId}`);
         const data = await res.json();
         
-        // Flatten all chapter questions into one array
-        const allQuestions = data.quizzes?.flatMap((quiz) => quiz.questions) || [];
+        // Get MCQ questions only
+        const quizData = data?.result?.courseLayout?.quizzes || [];
+        const allQuestions = quizData.flatMap(quiz => 
+          quiz.questions.filter(q => q.type === 'MCQ')
+        ) || [];
+        
         setQuestions(allQuestions);
         setAnswers(new Array(allQuestions.length).fill(null));
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load quiz");
+        setError(err.message || "Failed to load quiz");
       } finally {
         setLoading(false);
       }
@@ -36,18 +40,21 @@ export default function QuizPage() {
     fetchQuizQuestions();
   }, [courseId]);
 
-  const handleAnswerSelect = (questionIndex, optionIndex) => {
+  const handleAnswerSelect = (optionIndex) => {
     const newAnswers = [...answers];
-    newAnswers[questionIndex] = optionIndex;
+    newAnswers[currentQuestion] = optionIndex;
     setAnswers(newAnswers);
+    setShowResult(true);
   };
 
   const handleNext = () => {
     setCurrentQuestion(prev => Math.min(prev + 1, questions.length - 1));
+    setShowResult(false);
   };
 
   const handlePrev = () => {
     setCurrentQuestion(prev => Math.max(prev - 1, 0));
+    setShowResult(false);
   };
 
   const calculateScore = () => {
@@ -74,7 +81,7 @@ export default function QuizPage() {
     );
   }
 
-  if (questions.length === 0) {
+  if (!questions || questions.length === 0) {
     return (
       <div className="text-center p-8">
         <p className="mb-4">No quiz questions available for this course</p>
@@ -111,6 +118,7 @@ export default function QuizPage() {
             <Button onClick={() => {
               setScore(null);
               setCurrentQuestion(0);
+              setShowResult(false);
             }}>
               <Trophy className="mr-2 h-4 w-4" />
               Try Again
@@ -125,6 +133,8 @@ export default function QuizPage() {
     );
   }
 
+  const currentQ = questions[currentQuestion];
+
   return (
     <div className="max-w-3xl mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
@@ -135,13 +145,67 @@ export default function QuizPage() {
       </div>
 
       <div className="bg-white rounded-lg border shadow-sm p-6 mb-6">
-        <QuizQuestion
-          question={questions[currentQuestion]}
-          questionNumber={currentQuestion + 1}
-          totalQuestions={questions.length}
-          selectedOption={answers[currentQuestion]}
-          onAnswerSelected={(optionIndex) => handleAnswerSelect(currentQuestion, optionIndex)}
-        />
+        <div className="space-y-4">
+          <div className="mb-6">
+            <span className="text-sm font-medium text-gray-500">
+              Question {currentQuestion + 1} of {questions.length}
+            </span>
+            <h2 className="text-xl font-semibold mt-1">{currentQ.question}</h2>
+          </div>
+          
+          <div className="space-y-3">
+            {currentQ.options.map((option, index) => {
+              let optionClasses = 'p-4 border rounded-lg mb-3 cursor-pointer transition-colors ';
+              
+              if (showResult) {
+                if (index === currentQ.answer) {
+                  optionClasses += 'bg-green-50 border-green-400 ';
+                } else if (index === answers[currentQuestion] && index !== currentQ.answer) {
+                  optionClasses += 'bg-red-50 border-red-400 ';
+                }
+              } else {
+                optionClasses += 'hover:bg-gray-50 ';
+                if (index === answers[currentQuestion]) {
+                  optionClasses += 'bg-blue-50 border-blue-400 ';
+                }
+              }
+              
+              return (
+                <div
+                  key={index}
+                  className={optionClasses}
+                  onClick={() => !showResult && handleAnswerSelect(index)}
+                >
+                  <div className="flex items-start">
+                    <div className={`flex items-center justify-center h-6 w-6 rounded-full mr-3 mt-0.5 flex-shrink-0 ${
+                      showResult
+                        ? index === currentQ.answer
+                          ? 'bg-green-100 text-green-600'
+                          : index === answers[currentQuestion]
+                            ? 'bg-red-100 text-red-600'
+                            : 'bg-gray-100'
+                        : answers[currentQuestion] === index
+                          ? 'bg-blue-100 text-blue-600'
+                          : 'bg-gray-100'
+                    }`}>
+                      {String.fromCharCode(65 + index)}
+                    </div>
+                    <div>{option}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {showResult && currentQ.explanation && (
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="font-medium text-blue-800">
+                {answers[currentQuestion] === currentQ.answer ? 'Correct!' : 'Incorrect'}
+              </p>
+              <p className="mt-1 text-blue-700">{currentQ.explanation}</p>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex justify-between">
@@ -155,12 +219,12 @@ export default function QuizPage() {
         </Button>
         
         {currentQuestion === questions.length - 1 ? (
-          <Button onClick={calculateScore}>
+          <Button onClick={calculateScore} disabled={!showResult}>
             Submit Quiz
             <Trophy className="ml-2 h-4 w-4" />
           </Button>
         ) : (
-          <Button onClick={handleNext}>
+          <Button onClick={handleNext} disabled={!showResult}>
             Next
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>

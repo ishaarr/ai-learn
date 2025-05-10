@@ -22,22 +22,12 @@ const generationConfig = {
 
 export async function determineCourseType(topic) {
   const prompt = `
-  Based on the topic "${topic}", determine the most appropriate course type from these categories:
-  - Computer Science
-  - Mathematics
-  - Physics
-  - Chemistry
-  - Biology
-  - Engineering
-  - Business
-  - Humanities
-  - Social Sciences
-  - Medicine
-  - Law
-  - Arts
-  - Others
+  Categorize "${topic}" into one of these academic disciplines:
+  [Computer Science, Mathematics, Physics, Chemistry, Biology, 
+  Engineering, Business, Humanities, Social Sciences, Medicine, 
+  Law, Arts, Language, Health, Other]
   
-  Return ONLY the category name as a string. For example, if the topic is "Quantum Mechanics", return "Physics".
+  Return ONLY the category name. Example: "Quantum Mechanics" → "Physics"
   `;
 
   const result = await model.generateContent({
@@ -51,35 +41,63 @@ export async function determineCourseType(topic) {
 async function generateStudyMaterial({ topic, courseType, difficultyLevel }) {
   try {
     const prompt = `
-    Generate comprehensive study material for ${topic} (${courseType}, ${difficultyLevel} level).
-    Return a well-structured JSON response with:
-    - Chapter-wise summaries
-    - Topics covered
-    - Exam-style questions
-    - Final revision sheet
-    
-    Format:
+    Generate comprehensive study materials for "${topic}" (${courseType}, ${difficultyLevel} level) including:
+
+    1. Detailed chapter outlines with summaries and key points
+    2. Flashcards for important concepts
+    3. Quiz questions (ONLY MCQs with options and correct answers)
+    4. Common Q&A pairs
+
+    Return a JSON response with this exact structure:
     {
       "topic": string,
       "courseType": string,
       "difficultyLevel": string,
       "chapters": [{
         "title": string,
-        "summary": string,
-        "topics": string[],
+        "notes": string (markdown formatted),
+        "summary": string (3-5 paragraphs),
+        "key_points": string[] (5-7 bullet points),
+
         "exam_questions": [{
-          "type": "MCQ"|"Short Answer"|"Coding Problem",
+          "type": "MCQ",
           "question": string,
-          "options"?: string[], // for MCQs
+          "options": string[],
+          "answer": string,
+          "explanation"?: string
+        }]
+      }],
+      "flashcards": [{
+        "front": string,
+        "back": string,
+        "difficulty": "Easy"|"Medium"|"Hard"
+      }],
+      "quizzes": [{
+        "chapter_title": string,
+        "questions": [{
+          "type": "MCQ",
+          "question": string,
+          "options": string[],
           "answer": string
         }]
       }],
-      "revision_sheet": [{
-        "concept": string,
-        "definition": string
+      "qa_pairs": [{
+        "question": string,
+        "answer": string,
+        "related_chapter": string?
       }]
     }
+
+    Important:
+    - 5-8 chapters
+    - Format all content in Markdown for rich text display
+    - Each chapter must have 3-5 MCQs with explanations in exam_questions
+    - Quiz section must ONLY include MCQs with 4 options and a correct answer
+    - Generate 10-15 flashcards
+    - Create 8-12 Q&A pairs addressing common questions
+    - Use markdown formatting in notes with headers, lists, and code blocks where appropriate
     `;
+
 
     const result = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
@@ -88,14 +106,12 @@ async function generateStudyMaterial({ topic, courseType, difficultyLevel }) {
 
     const response = await result.response;
     const text = response.text();
-    
+
     try {
       return JSON.parse(text); // Parse the JSON response
     } catch (parseError) {
-      console.error("Failed to parse JSON response:", text);
-      throw new Error("Received malformed response from AI model");
+      console.error("Failed to parse JSON response:", parseError);
     }
-    
   } catch (error) {
     console.error("Error generating study material:", error);
     throw error; // Re-throw or return a structured error
