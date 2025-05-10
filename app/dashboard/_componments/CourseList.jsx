@@ -2,29 +2,18 @@
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+
 import {
   RefreshCw,
   BookOpen,
-  Clock,
-  Layers,
-  Award,
   ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+
+
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -43,7 +32,7 @@ function CourseList() {
       const result = await axios.post("/api/courses", {
         createdBy: user?.primaryEmailAddress?.emailAddress,
       });
-
+      console.log(result.data.result);
       if (result?.data?.result) {
         setCourseData(result.data.result);
         setLoading(false);
@@ -80,9 +69,10 @@ function CourseList() {
         </div>
       ) : courseData.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courseData.map((course, index) => (
-            <CourseCardItem key={index} course={course} />
-          ))}
+          {courseData &&
+            courseData.map((course, index) => (
+              <CourseCardItem key={index} course={course} />
+            ))}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -101,8 +91,6 @@ function CourseList() {
 
 function CourseCardItem({ course }) {
   const courseData = course?.courseLayout;
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
@@ -138,127 +126,18 @@ function CourseCardItem({ course }) {
           <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
             {courseData?.chapters?.[0]?.summary || "No description available"}
           </p>
-     
         </CardContent>
-        <CardFooter>
-          <Button onClick={() => setIsModalOpen(true)} className="w-full group">
-            View Details
-            <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
-          </Button>
-        </CardFooter>
+        <Link href={`course/${course?.courseId}`} className="cursor-pointer">
+          <CardFooter>
+            <Button
+              className="w-full group"
+            >
+              View Details
+              <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </CardFooter>
+        </Link>
       </Card>
-
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">{courseData?.topic}</DialogTitle>
-            <div className="flex gap-2 pt-2">
-              <Badge variant="outline">
-                <Layers className="h-3 w-3 mr-1" />
-                {courseData?.courseType}
-              </Badge>
-              <Badge variant="outline">
-                <Award className="h-3 w-3 mr-1" />
-                {courseData?.difficultyLevel}
-              </Badge>
-            </div>
-          </DialogHeader>
-
-          <div className="space-y-6 py-4">
-            <div>
-              <h3 className="text-lg font-semibold mb-3 flex items-center">
-                <BookOpen className="h-5 w-5 mr-2" />
-                Course Content
-              </h3>
-              <div className="space-y-4">
-                {courseData?.chapters?.map((chapter, index) => (
-                  <div key={index} className="border rounded-lg p-4">
-                    <h4 className="font-medium text-md flex items-center">
-                      <span className="bg-primary/10 text-primary rounded-full h-6 w-6 flex items-center justify-center text-sm mr-2">
-                        {index + 1}
-                      </span>
-                      {chapter.title}
-                    </h4>
-                    <p className="text-sm text-gray-600 mt-2 pl-8">
-                      {chapter.summary}
-                    </p>
-                    {chapter.topics?.length > 0 && (
-                      <div className="mt-3 pl-8">
-                        <h5 className="text-sm font-medium mb-1">Topics:</h5>
-                        <ul className="text-sm text-gray-600 space-y-1">
-                          {chapter.topics.map((topic, i) => (
-                            <li key={i} className="flex items-start">
-                              <span className="h-1 w-1 rounded-full bg-gray-400 mt-2 mr-2"></span>
-                              {topic}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {chapter.exam_questions?.length > 0 && (
-                      <div className="mt-4 pl-8">
-                        <h5 className="text-sm font-medium mb-2">
-                          Practice Questions:
-                        </h5>
-                        <div className="space-y-3">
-                          {chapter.exam_questions.map((question, qIndex) => (
-                            <div
-                              key={qIndex}
-                              className="bg-gray-50 dark:bg-gray-800 rounded p-3"
-                            >
-                              <p className="text-sm font-medium">
-                                {question.type}: {question.question}
-                              </p>
-                              {question.options && (
-                                <ul className="mt-2 space-y-1">
-                                  {question.options.map((option, oIndex) => (
-                                    <li
-                                      key={oIndex}
-                                      className="text-sm text-gray-600 flex items-start"
-                                    >
-                                      <span className="h-1.5 w-1.5 rounded-full bg-gray-400 mt-1.5 mr-2"></span>
-                                      {option}
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
-                              <div className="mt-2 text-xs text-primary font-medium">
-                                Answer: {question.answer}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {courseData?.revision_sheet?.length > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold mb-3 flex items-center">
-                  <Clock className="h-5 w-5 mr-2" />
-                  Quick Revision
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {courseData.revision_sheet.map((item, index) => (
-                    <div
-                      key={index}
-                      className="border rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                    >
-                      <h4 className="font-medium text-sm">{item.concept}</h4>
-                      <p className="text-sm text-gray-600 mt-1">
-                        {item.definition}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 }
