@@ -22,7 +22,7 @@ export default function QuizPage() {
         const res = await fetch(`/api/courses?courseId=${courseId}`);
         const data = await res.json();
         
-        // Get MCQ questions only
+        // Extract MCQ questions
         const quizData = data?.result?.courseLayout?.quizzes || [];
         const allQuestions = quizData.flatMap(quiz => 
           quiz.questions.filter(q => q.type === 'MCQ')
@@ -39,6 +39,7 @@ export default function QuizPage() {
 
     fetchQuizQuestions();
   }, [courseId]);
+
 
   const handleAnswerSelect = (optionIndex) => {
     const newAnswers = [...answers];
@@ -58,11 +59,22 @@ export default function QuizPage() {
   };
 
   const calculateScore = () => {
-    const correct = questions.reduce((acc, question, index) => {
-      return acc + (answers[index] === question.answer ? 1 : 0);
-    }, 0);
-    setScore(Math.round((correct / questions.length) * 100));
+    let correct = 0;
+    questions.forEach((question, index) => {
+      const ans = answers[index];
+     
+      if (question.options[ans] ===  question.answer) {
+       
+        correct++;
+      }
+    
+    });
+   
+    const finalScore = Math.round((correct / questions.length) * 100);
+    setScore(finalScore);
   };
+  
+
 
   if (loading) {
     return (
@@ -219,12 +231,15 @@ export default function QuizPage() {
         </Button>
         
         {currentQuestion === questions.length - 1 ? (
-          <Button onClick={calculateScore} disabled={!showResult}>
+          <Button 
+          onClick={calculateScore} 
+          disabled={answers[currentQuestion] === null}
+        >
             Submit Quiz
             <Trophy className="ml-2 h-4 w-4" />
           </Button>
         ) : (
-          <Button onClick={handleNext} disabled={!showResult}>
+          <Button onClick={()=>{handleNext()}}  disabled={!showResult}>
             Next
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
