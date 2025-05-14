@@ -1,13 +1,16 @@
+"use client"
 import DashboardHeader from './_componments/DashboardHeader'
-
-import React from 'react'
+import React, { useState } from 'react'
 import SideBar from './_componments/SideBar'
+import { CourseCountContext } from '../_context/CourseCountContext';
 
 function DashboardLayout({children}) {
+  const [totalCourse,setTotalCourse]=useState(0);
   return (
+    <CourseCountContext.Provider value={{totalCourse,setTotalCourse}}>
     <div>
         <div className='md:w-64 hidden md:block fixed'>
-            <SideBar/>
+            <SideBar/>     
         </div>
         <div className='md:ml-64'>
             <DashboardHeader/>
@@ -16,6 +19,7 @@ function DashboardLayout({children}) {
             </div>
         </div>
     </div>
+    </CourseCountContext.Provider>
   )
 }
 

@@ -1,7 +1,7 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import {
   RefreshCw,
@@ -16,12 +16,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CourseCountContext } from "@/app/_context/CourseCountContext";
 
 function CourseList() {
   const { user } = useUser();
   const [courseData, setCourseData] = useState([]);
   const [loading, setLoading] = useState(true);
-
+    const {totalCourse,setTotalCourse} = useContext(CourseCountContext);
   useEffect(() => {
     user && GetCourseList();
   }, [user]);
@@ -36,6 +37,7 @@ function CourseList() {
       if (result?.data?.result) {
         setCourseData(result.data.result);
         setLoading(false);
+        setTotalCourse(result.data.result?.length);
       }
     } catch (error) {
       console.error("Error fetching courses:", error);
