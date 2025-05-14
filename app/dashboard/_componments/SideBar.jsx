@@ -2,7 +2,7 @@
 import { CourseCountContext } from '@/app/_context/CourseCountContext'
 import { Button } from '@/components/ui/button'
 import { Progress } from "@/components/ui/progress"
-import { LayoutDashboard, Shield, UserCircle } from 'lucide-react'
+import { LayoutDashboard, Shield, UserCircle, Zap } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useContext } from 'react'
@@ -18,14 +18,15 @@ function SideBar() {
 
         {
             name:'Upgrade',
-            icon:Shield,
-            path:'/dashboard/upgrade'
+            icon:Zap,
+            onClick: () => window.location.href = 'https://buy.stripe.com/test_eVq28j75D1Vz6L17E31ck02',
+
         },
 
         {
             name:'Profile',
             icon:UserCircle,
-            path:'/dashboard/profile'
+            path:'dashboard/profile'
         },
     ]
 
@@ -45,16 +46,23 @@ function SideBar() {
              {/* Dynamically render sidebar menu items */}
         <div className="mt-5">
           {MenuList.map((menu, index) => (
-            <Link href={menu.path} key={index}>
-              <div
-                className={`flex items-center gap-2 p-3 rounded-lg cursor-pointer mb-2 
-                  ${path === menu.path ? 'bg-gray-200 font-semibold' : 'hover:bg-gray-100'}`}
-              >
-                <menu.icon className="text-xl" />
+        <div key={index}>
+          {menu.path ? (
+          <Link href={menu.path}>
+            <div className={`flex items-center gap-2 p-3 rounded-lg cursor-pointer mb-2 ${path === menu.path ? 'bg-gray-200 font-semibold' : ' hover:bg-gray-100'}`}>
+              <menu.icon className="text-xl" />
                 <span>{menu.name}</span>
-              </div>
-            </Link>
-          ))}
+            </div>
+          </Link>
+          ) : (
+          <button onClick={menu.onClick} className="flex items-center gap-2 p-3 rounded-lg cursor-pointer mb-2 hover:bg-gray-100 w-full text-left">
+            <menu.icon className="text-xl" />
+            <span>{menu.name}</span>
+          </button>)}
+        </div>
+        
+      ))}
+      
         </div>
         </div>
         <div className='border p-3  bg-slate-100 rounded-lg absolute bottom-10 w-[85%]'>
