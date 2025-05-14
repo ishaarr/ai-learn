@@ -117,9 +117,9 @@ export default function FlashcardsPage() {
 
       {flashCards.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {flashCards.map((card) => (
+          {flashCards.map((card,index) => (
             <Flashcard 
-              key={card.id}
+              key={index}
               front={card.front}
               back={card.back}
               difficulty={card.difficulty}

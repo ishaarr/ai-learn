@@ -100,10 +100,10 @@ async function generateStudyMaterial({ topic, courseType, difficultyLevel }) {
     Important:
     - 5-8 chapters
     - Format all content in Markdown for rich text display
-    - Each chapter must have 3-5 MCQs with explanations in exam_questions
+    - Each chapter must have 20-25 MCQs with explanations in exam_questions
     - Quiz section must ONLY include MCQs with 4 options and a correct answer
     - Generate 10-15 flashcards
-    - Create 8-12 Q&A pairs addressing common questions
+    - Create 20-25 Q&A pairs addressing common questions
     - Use markdown formatting in notes with headers, lists, and code blocks where appropriate
     `;
 
@@ -127,26 +127,5 @@ async function generateStudyMaterial({ topic, courseType, difficultyLevel }) {
   }
 }
 
-export const generateStudyTypeContentAiModel = model.startChat({
-  generationConfig,
-  history:
- [
-    {
-      role: 'user',
-      parts: [
-        {
-          text: 'Generate Flashcards on the topic: Java in JSON format with front back content maximum 20',
-        },
-      ],
-    },
-    {
-      role: 'user',
-      parts: [
-        {
-          text: 'Generate the Flashcards on the topic of Full Stack React Development in JSON format with front back content maximum 15',
-        },
-      ],
-    },
-  ]
-});
+
 export default generateStudyMaterial;

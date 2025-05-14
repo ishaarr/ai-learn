@@ -5,7 +5,7 @@ import SideBar from './_componments/SideBar'
 import { CourseCountContext } from '../_context/CourseCountContext';
 
 function DashboardLayout({children}) {
-  const [totalCourse,setTotalCourse]=useState(0);
+  const [totalCourse,setTotalCourse] = useState(0);
   return (
     <CourseCountContext.Provider value={{totalCourse,setTotalCourse}}>
     <div>

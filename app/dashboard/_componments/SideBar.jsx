@@ -42,16 +42,20 @@ function SideBar() {
             <Link href={'/create'} className='w-full'>
                 <Button className='w-full'>+ Create New</Button>
             </Link>
-            <div className='mt-5'>
-               {MenuList.map((menu,index) =>(
-                <div key={index} 
-                className={`flex gap-2 items-center p-3 hover:bg-slate-200 rounded-lg cursor-pointer mt-3
-                ${path==menu.path&&'bg-slate-200' }`}>
-                    {menu.icon && <menu.icon />}
-                    <h2>{menu.name}</h2>
-                </div>
-               ))}
-            </div>
+             {/* Dynamically render sidebar menu items */}
+        <div className="mt-5">
+          {MenuList.map((menu, index) => (
+            <Link href={menu.path} key={index}>
+              <div
+                className={`flex items-center gap-2 p-3 rounded-lg cursor-pointer mb-2 
+                  ${path === menu.path ? 'bg-gray-200 font-semibold' : 'hover:bg-gray-100'}`}
+              >
+                <menu.icon className="text-xl" />
+                <span>{menu.name}</span>
+              </div>
+            </Link>
+          ))}
+        </div>
         </div>
         <div className='border p-3  bg-slate-100 rounded-lg absolute bottom-10 w-[85%]'>
             <h2 className='text-lg mb-2'>Availabe Credits : {(5-totalCourse)}</h2>
@@ -62,5 +66,6 @@ function SideBar() {
     </div>
   )
 }
+
 
 export default SideBar

@@ -39,5 +39,5 @@ export const STUDY_TYPE_CONTENT_TABLE=pgTable('studyTypeContent',{
 export const PAYMENT_RECORD_TABLE = pgTable('paymentRecord',{
     id:serial().primaryKey(),
     customerId:varchar(),
-    sessionId:varchar(),
+    sessionId:varchar()
 })
