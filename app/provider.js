@@ -3,8 +3,6 @@ import { db } from "@/configs/db";
 import { USER_TABLE } from "@/configs/schema";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
-
-import { eq } from "drizzle-orm";
 import React, { useEffect } from "react";
 
 function Provider({ children }) {
@@ -33,9 +31,7 @@ function Provider({ children }) {
     //   }
       
     // } catch (error) {
-      const resp = await axios.post('/api/create-user',{user:user});
- 
-    
+      const resp = await axios.post('/api/create-user',{user:user}); 
   };
 
   return <div>{children}</div>;

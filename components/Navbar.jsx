@@ -1,3 +1,6 @@
+import Dashboard from "@/app/dashboard/layout"
+import { Layout } from "lucide-react";
+import Link from "next/link";
 
 export default function Navbar() {
   return (
@@ -7,9 +10,6 @@ export default function Navbar() {
             <img src='logo.png' alt='logo' width={60} height={60}/>
             <h2 className='font-bold text-2xl '>EduVerse</h2>
         </div>
-      <button className="bg-blue-600 text-white px-4 py-2 rounded-md">
-        Dashboard
-      </button>
     </header>
   );
 }

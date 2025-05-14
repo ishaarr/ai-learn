@@ -6,5 +6,10 @@ import { CreateNewUser, GenerateNotes, GenerateStudyTypeContent, helloWorld } fr
 export const { GET, POST, PUT } = serve({
   /* your functions will be passed here later! */
   client: inngest,
-  functions: [CreateNewUser],
+  functions: [
+    helloWorld,
+    CreateNewUser,
+    GenerateNotes,
+    GenerateStudyTypeContent
+  ],
 });

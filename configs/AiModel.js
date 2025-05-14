@@ -20,6 +20,15 @@ const generationConfig = {
   responseMimeType: "application/json",
 };
 
+const generationConfig2 = {
+  temperature: 0.8,
+  topP: 0.9,
+  topK: 40,
+  maxOutputTokens: 8192,
+  responseMimeType: "text/plain",
+};
+
+
 export async function determineCourseType(topic) {
   const prompt = `
   Categorize "${topic}" into one of these academic disciplines:
@@ -118,4 +127,26 @@ async function generateStudyMaterial({ topic, courseType, difficultyLevel }) {
   }
 }
 
+export const generateStudyTypeContentAiModel = model.startChat({
+  generationConfig,
+  history:
+ [
+    {
+      role: 'user',
+      parts: [
+        {
+          text: 'Generate Flashcards on the topic: Java in JSON format with front back content maximum 20',
+        },
+      ],
+    },
+    {
+      role: 'user',
+      parts: [
+        {
+          text: 'Generate the Flashcards on the topic of Full Stack React Development in JSON format with front back content maximum 15',
+        },
+      ],
+    },
+  ]
+});
 export default generateStudyMaterial;
